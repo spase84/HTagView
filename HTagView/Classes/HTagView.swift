@@ -91,8 +91,18 @@ open class HTagView: UIView {
     /**
      Main background color of tags
      */
+    /*
     @IBInspectable
-    open var tagMainBackColor : UIColor = UIColor(colorLiteralRed: 100/255, green: 200/255, blue: 205/255, alpha: 1) {
+    open var tagMainBackColor1 : UIColor = UIColor(colorLiteralRed: 100/255, green: 200/255, blue: 205/255, alpha: 1) {
+        didSet {
+            tags.forEach {
+                $0.tagMainBackColor = tagMainBackColor1
+            }
+        }
+    }
+    */
+    @IBInspectable
+    open var tagMainBackColor : UIColor = UIColor.init(red: 100/255, green: 200/255, blue: 205/255, alpha: 1.0) {
         didSet {
             tags.forEach {
                 $0.tagMainBackColor = tagMainBackColor
@@ -330,10 +340,10 @@ open class HTagView: UIView {
     
     override open var intrinsicContentSize : CGSize {
         if tags.count == 0{
-            return CGSize(width: UIViewNoIntrinsicMetric, height: 0)
+            return CGSize(width: UIView.noIntrinsicMetric, height: 0)
         }else{
             let height = (tags.last?.frame.origin.y ?? 0) + (tags.last?.frame.height ?? 0) + marg
-            return CGSize(width: UIViewNoIntrinsicMetric, height: height )
+            return CGSize(width: UIView.noIntrinsicMetric, height: height )
         }
     }
     
