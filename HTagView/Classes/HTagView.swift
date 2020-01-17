@@ -302,13 +302,13 @@ open class HTagView: UIView {
             tags.append(tag)
         }
         
-        layoutSubviews()
+        //layoutSubviews()
+        resizeTheUIView()
         invalidateIntrinsicContentSize()
     }
     
-    // MARK: - Subclassing UIView
-    override open func layoutSubviews() {
-        guard let dataSource = dataSource else {
+    func resizeTheUIView(){
+       guard let dataSource = dataSource else {
             return
         }
         
@@ -336,6 +336,10 @@ open class HTagView: UIView {
             }
             self.frame.size = CGSize(width: self.frame.width, height: y + (tags.last?.frame.height ?? 0) + marg )
         }
+    }
+    // MARK: - Subclassing UIView
+    override open func layoutSubviews() {
+        print("HTagView resizeTheUIView ")
     }
     
     override open var intrinsicContentSize : CGSize {
