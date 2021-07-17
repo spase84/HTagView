@@ -18,6 +18,7 @@ public protocol HTagViewDelegate: class {
      */
     @objc optional func tagView(_ tagView: HTagView, didCancelTagAtIndex index: Int)
     @objc optional func tagView(_ tagView: HTagView, tagSelectionDidChange selectedIndices: [Int])
+	@objc optional func tagView(_ tagView: HTagView, viewDidChangeHeight calculatedHeight: CGFloat)
 }
 
 /**
@@ -275,10 +276,9 @@ open class HTagView: UIView {
         
         let selection = selectedIndices
         
-        for tag in tags {
-            tag.removeFromSuperview()
-        }
-        tags = []
+		tags.forEach { $0.removeFromSuperview() }
+		tags.removeAll()
+
         for index in  0 ..< dataSource.numberOfTags(self) {
             let tag = HTag()
             tag.delegate = self
@@ -301,8 +301,7 @@ open class HTagView: UIView {
             addSubview(tag)
             tags.append(tag)
         }
-        
-        //layoutSubviews()
+
         resizeTheUIView()
         invalidateIntrinsicContentSize()
     }
@@ -317,7 +316,7 @@ open class HTagView: UIView {
         }else{
             var x = marg
             var y = marg
-            for index in 0..<tags.count{
+			tags.enumerated().forEach { index, _ in
                 if dataSource.tagView(self, tagWidthAtIndex: index) != .HTagAutoWidth {
                     tags[index].tagSpecifiedWidth = dataSource.tagView(self, tagWidthAtIndex: index)
                 } else {
@@ -326,15 +325,21 @@ open class HTagView: UIView {
                 if tagMaximumWidth == .HTagAutoMaximumWidth {
                     tags[index].tagMaximumWidth = frame.width - 2 * marg
                 }
-                if tags[index].frame.width + x > frame.width - marg{
-                    y += tags[index].frame.height + btwLines
+                if tags[index].frame.width + x > frame.width - marg {
+					
+					if frame.width == 0 {
+						y += (tags[index].frame.height + btwLines) / 2
+					} else {
+						y += tags[index].frame.height + btwLines
+					}
                     x = marg
                 }
                 
                 tags[index].frame.origin = CGPoint(x: x, y: y)
                 x += tags[index].frame.width + btwTags
             }
-            self.frame.size = CGSize(width: self.frame.width, height: y + (tags.last?.frame.height ?? 0) + marg )
+			self.frame.size = CGSize(width: self.frame.width, height: y + marg )
+			delegate?.tagView?(self, viewDidChangeHeight: self.frame.size.height)
         }
     }
     // MARK: - Subclassing UIView
